@@ -36,15 +36,21 @@ def crop_image(img_rgb):
     faceRestoreHelper.read_image(np.ascontiguousarray(img_rgb[:, :, ::-1].copy()))
     faceRestoreHelper.get_face_landmarks_5()
 
-    landmarks = faceRestoreHelper.all_landmarks_5
-    # landmarks are already sorted with confidence.
+    try:
+        landmarks = faceRestoreHelper.all_landmarks_5
+        # landmarks are already sorted with confidence.
 
-    if len(landmarks) == 0:
-        print('No face detected')
+        if len(landmarks) == 0:
+            print('No face detected')
+            return img_rgb
+        else:
+            print(f'Detected {len(landmarks)} faces')
+
+        result = align_warp_face(faceRestoreHelper, landmarks[0])
+
+        return np.ascontiguousarray(result[:, :, ::-1].copy())
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return img_rgb
-    else:
-        print(f'Detected {len(landmarks)} faces')
 
-    result = align_warp_face(faceRestoreHelper, landmarks[0])
-
-    return np.ascontiguousarray(result[:, :, ::-1].copy())
